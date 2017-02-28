@@ -43,7 +43,8 @@ function Game:new()
     self.menu = self.cached_menu -- start with MainMenu
     cfg.scale = 1
     cfg.translate = {0,0}
-
+    local os = love.system.getOS()
+    self.touchbased = (os == "Android" or os == "iOS")
     return self
 end
 
