@@ -15,6 +15,12 @@ else...
 
 ## TODO
 
-- make mini collision library to mutualise code
-- "cook"/cache dynamic objects variables to not re-compute
 - fix boost speed
+- "cook"/cache dynamic objects variables to not re-compute
+- fix multi-user support
+- do graphical options:
+    - difficulty
+    - input config
+    - level selection
+- network mode ?
+
