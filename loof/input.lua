@@ -159,6 +159,8 @@ function JoystickInput:ispressed(nr)
     end
 end
 
+-- hooks
+
 function love.joystickremoved(joystick)
     for i, inp in ipairs(gameInputs.list) do
         if gameInputs.list[inp].joy == joystick then

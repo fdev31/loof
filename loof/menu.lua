@@ -1,5 +1,32 @@
 key_funcs = require('key_handlers')
 
+local Entry = objects.object:clone()
+
+function Entry:handle(menu, key)
+    return self.handler(menu, key)
+end
+
+local SimpleEntry = Entry:clone()
+
+function SimpleEntry:new(name, handler)
+    local self = Entry.new(self)
+    self.handler = handler
+    self.selected = objects.Sprite:new('menu_' .. name .. '_sel', {0,0})
+    self.unselected = objects.Sprite:new('menu_' .. name , {0,0})
+    return self
+end
+
+function SimpleEntry:draw(x, y, selected)
+    if selected then
+        self.selected:draw(x,y)
+    else
+        self.unselected:draw(x,y)
+    end
+end
+
+function SimpleEntry:chose()
+end
+
 local Menu = objects.object:clone()
 
 function Menu:new(background, choices)
@@ -10,15 +37,8 @@ function Menu:new(background, choices)
     self.last_ts = 0
     self.ts = 0
     self.repeat_max = 0.2
+    self.entries = choices
 
-    self.unselected_pics = objects.object:new()
-    for i, choice in ipairs(choices) do
-        self.unselected_pics:insert( objects.Sprite:new('menu_' .. choice, {0,0} ))
-    end
-    self.selected_pics = objects.object:new()
-    for i, choice in ipairs(choices) do
-        self.selected_pics:insert( objects.Sprite:new('menu_' .. choice .. "_sel", {0,0} ))
-    end
     return self
 end
 
@@ -43,35 +63,31 @@ function Menu:update(dt)
         key_funcs.pop_one_level()
     elseif gameInputs:ispressed('*', 1) then
         self.last_ts = self.ts
-        self['handle_' .. self.choices[self.selected]](self, 'return')
+        self.choices[self.selected]:handle(self, 'return')
     elseif gameInputs:ispressed('*', 'left') then
         self.last_ts = self.ts
-        self['handle_' .. self.choices[self.selected]](self, 'left')
+        self.choices[self.selected]:handle(self, 'left')
     elseif gameInputs:ispressed('*', 'right') then
         self.last_ts = self.ts
-        self['handle_' .. self.choices[self.selected]](self, 'right')
+        self.choices[self.selected]:handle(self, 'right')
     end
 end
 
 function Menu:draw()
     self.background:draw(0, 0)
-    for i, choice in ipairs(self.unselected_pics) do
-        local pic = nil
-        if self.selected == i then
-            pic = self.selected_pics[i]
-        else
-            pic = choice
-        end
-        if pic ~= nil then
-            pic:draw(300, i*100)
-        end
+    for i, entry in ipairs(self.entries) do
+        entry:draw(300, i*100, self.selected == i)
     end
 end
 
 MainMenu = Menu:clone()
 
 function MainMenu:new()
-    local self = Menu.new(self, 'menu', {'NewGame', 'Enemies', 'Quit'})
+    local self = Menu.new(self, 'menu', {
+        SimpleEntry:new('NewGame', MainMenu.handle_NewGame),
+        SimpleEntry:new('Enemies', MainMenu.handle_Enemies),
+        SimpleEntry:new('Quit',    MainMenu.handle_Quit)
+    })
     return self
 end
 
