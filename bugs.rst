@@ -1,7 +1,31 @@
 Bugz
 ####
 
-:count: 9
+:count: 11
+
+--------------------------------------------------------------------------------
+
+There is no option to change difficulty
+#######################################
+
+:priority: 0
+:bugid: 9
+:created: 2017-04-11T21:26:07
+
+- easy
+- medium
+- hard
+
+--------------------------------------------------------------------------------
+
+There is no sound
+#################
+
+:priority: 0
+:bugid: 8
+:created: 2017-04-11T19:41:10
+
+Some sound effects and music would be appreciated
 
 --------------------------------------------------------------------------------
 
@@ -109,14 +133,15 @@ very rare case :(
 
 --------------------------------------------------------------------------------
 
-There is no sound
-#################
+Network gaming would be nice
+############################
 
 :priority: 0
-:bugid: 8
-:created: 2017-04-11T19:41:10
+:bugid: 10
+:created: 2017-04-11T21:26:57
 
-Some sound effects and music would be appreciated
+Say one can start a server
+. each client would connect to this server and the game would be synchronized
 
 
 ----------

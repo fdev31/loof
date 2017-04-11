@@ -15,12 +15,5 @@ else...
 
 ## TODO
 
-- fix boost speed
-- "cook"/cache dynamic objects variables to not re-compute
-- fix multi-user support
-- do graphical options:
-    - difficulty
-    - input config
-    - level selection
-- network mode ?
+See [Bugs/TODOs](bugs.rst)
 
