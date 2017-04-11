@@ -129,7 +129,15 @@ end
 
 function JoystickInput:getAxis(which)
     which = 'left'
-    return self.jp:getGamepadAxis(which..'x'), self.jp:getGamepadAxis(which..'y')
+    local d = 0.1
+    local x, y = self.jp:getGamepadAxis(which..'x'), self.jp:getGamepadAxis(which..'y')
+    if math.abs(x) < d then
+        x = 0
+    end
+    if math.abs(y) < d then
+        y = 0
+    end
+    return x, y
 end
 
 function JoystickInput:ispressed(nr)
