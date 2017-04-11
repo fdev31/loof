@@ -3,7 +3,7 @@ key_funcs = require('key_handlers')
 local Entry = objects.object:clone()
 
 function Entry:handle(menu, key)
-    return self.handler(menu, key)
+    return self.handler(menu, self, key)
 end
 
 local SimpleEntry = Entry:clone()
@@ -24,7 +24,46 @@ function SimpleEntry:draw(x, y, selected)
     end
 end
 
-function SimpleEntry:chose()
+local LeftRightEntry = Entry:clone()
+
+function LeftRightEntry:new(name)
+    local self = Entry.new(self)
+    self.position = 0
+    self.offset = 200
+    self.label = SimpleEntry:new(name)
+    self.movable = {
+        objects.Sprite:new('menu_movable_left', {0,0}),
+        objects.Sprite:new('menu_movable', {0,0}),
+        objects.Sprite:new('menu_movable_right', {0,0}),
+    }
+    return self
+end
+function LeftRightEntry:handle(menu, key)
+    print(self, menu, key)
+    if key == 'left' then
+        self:move_left()
+    elseif key == 'right' then
+        self:move_right()
+    end
+end
+
+function LeftRightEntry:draw(x, y, selected)
+    self.label:draw(x, y, selected)
+    self.movable[2+self.position]:draw(
+    x + self.label.selected.width + 20 + self.offset + (self.position*self.offset),
+    y + self.label.selected.height/2
+    )
+end
+
+function LeftRightEntry:move_left()
+    if self.position > -1 then
+        self.position = self.position - 1
+    end
+end
+function LeftRightEntry:move_right()
+    if self.position < 1 then
+        self.position = self.position + 1
+    end
 end
 
 local Menu = objects.object:clone()
@@ -86,7 +125,8 @@ function MainMenu:new()
     local self = Menu.new(self, 'menu', {
         SimpleEntry:new('NewGame', MainMenu.handle_NewGame),
         SimpleEntry:new('Enemies', MainMenu.handle_Enemies),
-        SimpleEntry:new('Quit',    MainMenu.handle_Quit)
+        SimpleEntry:new('Quit',    MainMenu.handle_Quit),
+--        LeftRightEntry:new('Enemies'),
     })
     return self
 end
@@ -101,15 +141,16 @@ end
 MainMenu.handle_Quit = love.event.quit
 MainMenu.handle_Resume = key_funcs.pop_one_level
 
-function MainMenu:handle_NewGame(from)
+function MainMenu:handle_NewGame(entry, key)
     game:reset()
     key_funcs.pop_one_level()
 end
 
-function MainMenu:handle_Enemies(from)
-    if from == 'right' then
+function MainMenu:handle_Enemies(entry, key)
+    if key == 'right' then
         game.board:add_opponent()
-    elseif from == 'left' then
+    elseif key == 'left' then
         game.board:remove_opponent()
     end
 end
+
