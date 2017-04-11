@@ -10,6 +10,7 @@ BTN_1 = 5
 function Inputs:new()
     local self = objects.object.new(self)
     self.blocked = 0
+    self.gamepads = {}
     return self
 end
 
@@ -121,8 +122,10 @@ Inputs:add_input('kb', KeyboardInput:new( {'space', 'escape'}, {'up', 'down', 'l
 --Inputs:add_input('kb2', KeyboardInput:new( {'e'}, {'z', 's', 'q', 'd'}) )
 
 local JoystickInput = objects.object:clone()
-function JoystickInput:new(joystick)
+function JoystickInput:new(joystick, key_mapping)
     local self = objects.object.new(self)
+    self.pressmap = {}
+    self.map = key_mapping
     self.jp = joystick
     return self
 end
@@ -141,19 +144,18 @@ function JoystickInput:getAxis(which)
 end
 
 function JoystickInput:ispressed(nr)
+    local d=0.3
     if type(nr) == 'number' then
-        return self.jp:isDown(nr)
-    else
-        local d=0.3
-        if nr == 'left' and self.jp:getGamepadAxis('leftx') < -d then
-            return true
-        elseif nr == 'right' and self.jp:getGamepadAxis('leftx') > d then
-            return true
-        elseif nr == 'up' and self.jp:getGamepadAxis('lefty') < -d then
-            return true
-        elseif nr == 'down' and self.jp:getGamepadAxis('lefty') > d then
-            return true
-        end
+        return self.pressmap[self.map[nr]]
+    end
+    if nr == 'left' and self.jp:getGamepadAxis('leftx') < -d then
+        return true
+    elseif nr == 'right' and self.jp:getGamepadAxis('leftx') > d then
+        return true
+    elseif nr == 'up' and self.jp:getGamepadAxis('lefty') < -d then
+        return true
+    elseif nr == 'down' and self.jp:getGamepadAxis('lefty') > d then
+        return true
     end
 end
 
@@ -163,10 +165,13 @@ function love.joystickremoved(joystick)
             gameInputs.remove_input(inp)
         end
     end
+    gameInputs.gamepads[joystick] = nil
 end
 
 function love.joystickadded(joystick)
-    gameInputs:add_input('gp', JoystickInput:new(joystick) )
+    local gp = JoystickInput:new(joystick, {'a', 'start'})
+    gameInputs:add_input('gp', gp)
+    gameInputs.gamepads[joystick] = gp
 end
 
 function love.keypressed(key)
@@ -175,4 +180,11 @@ end
 
 function love.keyreleased(key)
     KeyboardInput.pressmap[key] = nil
+end
+
+function love.gamepadpressed(joystick, button)
+    gameInputs.gamepads[joystick].pressmap[button] = true
+end
+function love.gamepadreleased(joystick, button)
+    gameInputs.gamepads[joystick].pressmap[button] = nil
 end
