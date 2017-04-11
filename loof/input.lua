@@ -52,13 +52,13 @@ function Inputs:ispressed(name, keyname)
     end
 end
 
-function Inputs:getAxis(name, which)
+function Inputs:getAxis(name)
     if self.blocked > 0 then
         return 0,0
     end
     local l = self.list[name]
     if l then
-        return self.list[name]:getAxis(which)
+        return self.list[name]:getAxis(name)
     else
         return 0, 0
     end
@@ -128,6 +128,7 @@ function JoystickInput:new(joystick)
 end
 
 function JoystickInput:getAxis(which)
+    which = 'left'
     return self.jp:getGamepadAxis(which..'x'), self.jp:getGamepadAxis(which..'y')
 end
 
@@ -135,13 +136,14 @@ function JoystickInput:ispressed(nr)
     if type(nr) == 'number' then
         return self.jp:isDown(nr)
     else
-        if nr == 'left' and self.jp:getGamepadAxis('leftx') < 0 then
+        local d=0.3
+        if nr == 'left' and self.jp:getGamepadAxis('leftx') < -d then
             return true
-        elseif nr == 'right' and self.jp:getGamepadAxis('leftx') > 0 then
+        elseif nr == 'right' and self.jp:getGamepadAxis('leftx') > d then
             return true
-        elseif nr == 'up' and self.jp:getGamepadAxis('lefty') < 0 then
+        elseif nr == 'up' and self.jp:getGamepadAxis('lefty') < -d then
             return true
-        elseif nr == 'down' and self.jp:getGamepadAxis('lefty') > 0 then
+        elseif nr == 'down' and self.jp:getGamepadAxis('lefty') > d then
             return true
         end
     end
