@@ -1,5 +1,5 @@
-Bugz
-####
+Open tickets
+############
 
 :count: 13
 
