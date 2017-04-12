@@ -1,4 +1,5 @@
 key_funcs = require('key_handlers')
+cfg = require('config')
 
 local Entry = objects.object:clone()
 
@@ -26,9 +27,10 @@ end
 
 local LeftRightEntry = Entry:clone()
 
-function LeftRightEntry:new(name, default)
+function LeftRightEntry:new(name, default, handler)
     local self = Entry.new(self)
     self.position = default or 0
+    self.handler = handler
     self.offset = 40
     self.label = SimpleEntry:new(name)
     self.movable = {
@@ -38,12 +40,16 @@ function LeftRightEntry:new(name, default)
     }
     return self
 end
+
 function LeftRightEntry:handle(menu, key)
-    print(self, menu, key)
+    local r
     if key == 'left' then
-        self:move_left()
+        r = self:move_left()
     elseif key == 'right' then
-        self:move_right()
+        r = self:move_right()
+    end
+    if r then
+        self.handler(menu, self, key)
     end
 end
 
@@ -58,11 +64,13 @@ end
 function LeftRightEntry:move_left()
     if self.position > -1 then
         self.position = self.position - 1
+        return true
     end
 end
 function LeftRightEntry:move_right()
     if self.position < 1 then
         self.position = self.position + 1
+        return true
     end
 end
 
@@ -125,8 +133,8 @@ function MainMenu:new()
     local self = Menu.new(self, 'menu', {
         SimpleEntry:new('NewGame', MainMenu.handle_NewGame),
         SimpleEntry:new('Enemies', MainMenu.handle_Enemies),
-        LeftRightEntry:new('Keyboard', -1),
-        LeftRightEntry:new('GamePad', 0),
+        LeftRightEntry:new('Keyboard', -1, MainMenu.handle_keyboardswitch),
+        LeftRightEntry:new('GamePad', 0, MainMenu.handle_gamepadswitch),
         SimpleEntry:new('Quit',    MainMenu.handle_Quit),
     })
     return self
@@ -155,3 +163,9 @@ function MainMenu:handle_Enemies(entry, key)
     end
 end
 
+function MainMenu:handle_keyboardswitch(entry, key)
+    cfg.keyboard = entry.position
+end
+function MainMenu:handle_gamepadswitch(entry, key)
+    cfg.gamepad = entry.position
+end

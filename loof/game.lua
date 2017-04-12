@@ -160,8 +160,23 @@ function Game:reset()
     end
     self.board = Board:new()
     local p1 = objects.Sprite:new('p1')
+    local p2 = objects.Sprite:new('p2')
     for name in pairs(gameInputs.list) do
-        self.board:add_player(p1, 'noname', name)
+        if name == "kb" then
+            if cfg.keyboard == -1 or not cfg.gamepad then -- force keyboard if no gamepad
+                self.board:add_player(p1, 'noname', name)
+            elseif cfg.keyboard == 1 then
+                self.board:add_player(p2, 'noname', name)
+            end
+        elseif name == "gp" then
+            if cfg.gamepad == -1 then
+                self.board:add_player(p1, 'noname', name)
+            elseif cfg.gamepad == 1 then
+                self.board:add_player(p2, 'noname', name)
+            end
+        else
+            self.board:add_player(p1, 'noname', name)
+        end
     end
 end
 
