@@ -26,10 +26,10 @@ end
 
 local LeftRightEntry = Entry:clone()
 
-function LeftRightEntry:new(name)
+function LeftRightEntry:new(name, default)
     local self = Entry.new(self)
-    self.position = 0
-    self.offset = 200
+    self.position = default or 0
+    self.offset = 40
     self.label = SimpleEntry:new(name)
     self.movable = {
         objects.Sprite:new('menu_movable_left', {0,0}),
@@ -50,8 +50,8 @@ end
 function LeftRightEntry:draw(x, y, selected)
     self.label:draw(x, y, selected)
     self.movable[2+self.position]:draw(
-    x + self.label.selected.width + 20 + self.offset + (self.position*self.offset),
-    y + self.label.selected.height/2
+    x + self.label.selected.width + self.offset + (self.position*self.offset),
+    y + self.label.selected.height/2 - self.movable[1].height/2
     )
 end
 
@@ -125,8 +125,9 @@ function MainMenu:new()
     local self = Menu.new(self, 'menu', {
         SimpleEntry:new('NewGame', MainMenu.handle_NewGame),
         SimpleEntry:new('Enemies', MainMenu.handle_Enemies),
+        LeftRightEntry:new('Keyboard', -1),
+        LeftRightEntry:new('GamePad', 0),
         SimpleEntry:new('Quit',    MainMenu.handle_Quit),
---        LeftRightEntry:new('Enemies'),
     })
     return self
 end
