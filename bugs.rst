@@ -1,7 +1,7 @@
 Bugz
 ####
 
-:count: 12
+:count: 13
 
 --------------------------------------------------------------------------------
 
@@ -143,5 +143,16 @@ REFACTOR LEFT / RIGHT code
 
 At the end, the target is:
 - AI on any side
-- Players on any side
-- Startup position better computed
+
+--------------------------------------------------------------------------------
+
+It's very difficult to recognise the player when multiplayer
+############################################################
+
+:priority: 0
+:bugid: 12
+:created: 2017-04-12T22:41:25
+
+
+
+----------
