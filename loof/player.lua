@@ -6,6 +6,7 @@ Dude.head = baseobj.Sprite:new('pawn')
 function Dude:new(body, opts)
     local radius = opts and opts.radius or 20
     local self = baseobj.DrawableInterface.new(self, body, love.physics.newCircleShape(radius)) 
+    self.side = opts and opts.side or -1
     self.color = opts and opts.color or {0, 0, 0}
     self.radius = radius
     self.boosted = nil

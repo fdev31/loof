@@ -164,18 +164,18 @@ function Game:reset()
     for name in pairs(gameInputs.list) do
         if name == "kb" then
             if cfg.keyboard == -1 or not cfg.gamepad then -- force keyboard if no gamepad
-                self.board:add_player(p1, 'noname', name)
+                self.board:add_player(p1, 'noname', name, {side=-1})
             elseif cfg.keyboard == 1 then
-                self.board:add_player(p2, 'noname', name)
+                self.board:add_player(p2, 'noname', name, {side=1})
             end
         elseif name == "gp" then
             if cfg.gamepad == -1 then
-                self.board:add_player(p1, 'noname', name)
+                self.board:add_player(p1, 'noname', name, {side=-1})
             elseif cfg.gamepad == 1 then
-                self.board:add_player(p2, 'noname', name)
+                self.board:add_player(p2, 'noname', name, {side=1})
             end
         else
-            self.board:add_player(p1, 'noname', name)
+            self.board:add_player(p1, 'noname', name, {side=-1})
         end
     end
 end

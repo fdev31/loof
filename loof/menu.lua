@@ -157,7 +157,7 @@ end
 
 function MainMenu:handle_Enemies(entry, key)
     if key == 'right' then
-        game.board:add_opponent()
+        game.board:add_opponent(nil, {side=1})
     elseif key == 'left' then
         game.board:remove_opponent()
     end

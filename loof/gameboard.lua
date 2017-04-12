@@ -56,7 +56,7 @@ function Board:new()
 
     local p2 = objects.Sprite:new('p2')
     for i=1,cfg.DUDES do
-        self:add_opponent(p2)
+        self:add_opponent(p2, {side=1})
     end
     self.opponents_img = p2
 
@@ -77,12 +77,14 @@ function Board:remove_opponent()
     end
 end
 
-function Board:add_opponent(image)
+function Board:add_opponent(image, opts)
+    local side = opts and opts.side or 1
+
     if image == nil then
-        image = objects.Sprite:new('p2')
+        image = objects.Sprite:new(side == -1 and 'p1' or 'p2')
         cfg.DUDES = cfg.DUDES + 1
     end
-    local d = objects.Dude:new(love.physics.newBody(self.world, 0, 0, "dynamic") , {color={255, 70, 204}})
+    local d = objects.Dude:new(love.physics.newBody(self.world, 0, 0, "dynamic") , {color={255, 70, 204}, side=side})
     d.img = image
     table.insert(self.opponents, 1, d)
     table.insert(self.active_objects, 1, d)
@@ -92,37 +94,46 @@ function Board:add_opponent(image)
     d.body:setPosition( op_point[1] + love.math.random( -amp/2, amp/2),
         op_point[2] + love.math.random(-amp, amp)
     )
+    self:place(d)
 end
 
-function Board:add_player(image, name, input)
-    local d = objects.Dude:new(love.physics.newBody(self.world, 0, 0, "dynamic") , {color={128, 179, 255}})
+function Board:add_player(image, name, input, opts)
+    local side = opts and opts.side or 1
+    local d = objects.Dude:new(love.physics.newBody(self.world, 0, 0, "dynamic") , {color={128, 179, 255}, side=side})
     d.img = image
     d.name = name
     d.input = input
     table.insert(self.players, 1, d)
     local op_point = {self.background.width / 3, self.background.height/2 }
     local amp = self.background.height / 10
-    d.body:setPosition( op_point[1] + love.math.random( -amp/2, amp/2),
-        op_point[2] + love.math.random(-amp, amp)
-    )
+    self:place(d)
+end
+
+function Board:place(plr)
+    if plr.side == -1 then
+        plr.body:setPosition( self.background.width / 3 + math.random(-100, 100),
+            self.background.height/2  + math.random(-100, 100)
+        )
+    else
+        local plr_point = {self.background.width * 2 / 3, self.background.height/2 }
+        local amp = self.background.height / 10
+        plr.body:setPosition( plr_point[1] + love.math.random( -amp/2, amp/2),
+            plr_point[2] + love.math.random(-amp, amp)
+        )
+    end
+    plr:reset()
 end
 
 function Board:reset_state()
     for i, plr in ipairs(self.players) do
-        plr.body:setPosition( self.background.width / 3 + math.random(-100, 100), self.background.height/2  + math.random(-100, 100))
-        plr:reset()
+        self:place(plr)
     end
 
     self.ball.body:setPosition( self.background.width / 2, self.background.height/2 )
     self.ball:reset()
 
-    local op_point = {self.background.width * 2 / 3, self.background.height/2 }
-    local amp = self.background.height / 10
     for i, op in ipairs(self.opponents) do
-        op.body:setPosition( op_point[1] + love.math.random( -amp/2, amp/2),
-            op_point[2] + love.math.random(-amp, amp)
-        )
-        op:reset()
+        self:place(op)
     end
     self.ball:attach(nil)
 end

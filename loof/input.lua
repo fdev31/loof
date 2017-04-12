@@ -1,3 +1,4 @@
+local cfg = require('config')
 local Inputs = objects.object:clone()
 Inputs.list = {}
 
