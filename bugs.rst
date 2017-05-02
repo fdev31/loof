@@ -5,6 +5,15 @@ Open tickets
 
 --------------------------------------------------------------------------------
 
+It's very difficult to recognise the player when multiplayer
+############################################################
+
+:priority: 0
+:bugid: 12
+:created: 2017-04-12T22:41:25
+
+--------------------------------------------------------------------------------
+
 Network gaming would be nice
 ############################
 
@@ -40,19 +49,6 @@ Direction should be immediate
 
 
 have second vector for wanted direction
-
---------------------------------------------------------------------------------
-
-Sometimes ball is very hard to catch
-####################################
-
-:priority: 0
-:bugid: 1
-:created: 2017-03-04T01:55:40.076009
-
-
-
-to be investigated more in deep
 
 --------------------------------------------------------------------------------
 
@@ -143,16 +139,3 @@ REFACTOR LEFT / RIGHT code
 
 At the end, the target is:
 - AI on any side
-
---------------------------------------------------------------------------------
-
-It's very difficult to recognise the player when multiplayer
-############################################################
-
-:priority: 0
-:bugid: 12
-:created: 2017-04-12T22:41:25
-
-
-
-----------
