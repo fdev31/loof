@@ -168,13 +168,13 @@ function Board:update(dt)
     
     local found = nil
     for i, g in ipairs(self.active_objects) do
-        if not found and g:isa(objects.Dude) and g ~= self.ball.player then -- if dude without a ball
-            local x, y, dist = self.ball:distance(unpack(g.feet))
-            if dist - g.radius - self.ball.radius - 10 <= 0 then
-                self.ball:attach(nil)
-                found = true
-            end
-        end
+--        if not found and g:isa(objects.Dude) and g ~= self.ball.player then -- if dude without a ball
+--            local x, y, dist = self.ball:distance(unpack(g.feet))
+--            if dist - g.radius - self.ball.radius - 10 <= 0 then
+--                self.ball:attach(nil)
+--                found = true
+--            end
+--        end
         g:update(dt)
     end
 end

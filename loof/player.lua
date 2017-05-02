@@ -3,6 +3,9 @@ local baseobj = require('baseobj')
 local Dude = baseobj.DrawableInterface:clone()
 Dude.head = baseobj.Sprite:new('pawn')
 
+local BOOST_DURATION = 0.2
+local PUSH_DURATION = 0.5
+
 function Dude:new(body, opts)
     local radius = opts and opts.radius or 20
     local self = baseobj.DrawableInterface.new(self, body, love.physics.newCircleShape(radius)) 
@@ -65,11 +68,12 @@ function Dude:draw()
 end
 
 function Dude:hit() -- dude is pushed by someone
-    self.pushed = 1
+    self.pushed = PUSH_DURATION 
 end
 
 function Dude:update(dt)
     local x, y = self.body:getLinearVelocity()
+
     if self.last_boost ~= nil then
         self.last_boost = self.last_boost - dt
         if self.last_boost < 0 then
@@ -77,14 +81,14 @@ function Dude:update(dt)
         end
     end
     if self.pushed ~= nil then
-        if self.pushed == 1 then
+        if self.pushed == PUSH_DURATION then
             dprint("PUSHED, SHOOTING !!!")
             self:boost(dt)
         end
-        self.pushed = self.pushed + dt
-    end
-    if self.pushed and self.pushed >= 0.3 then
-        self.pushed = nil
+        self.pushed = self.pushed - dt
+        if self.pushed <= 0 then
+            self.pushed = nil
+        end
     end
     if self.shot ~= nil then
         self.shot = self.shot + dt
@@ -93,29 +97,27 @@ function Dude:update(dt)
             dprint("shot = nil")
         end
     end
-
+    -- if boosted
     if self.boosted ~= nil then
-        self.boosted = dt + self.boosted
-        if self.boosted >= 0.1 then
-            if self.slowed_down == nil then
-                self.body:setLinearVelocity(0, 0)
-            end
-        end
-        if self.boosted >= 0.2 then
-            if self.pushed then
-                self.pushed = nil
-            else
-                self.slowed_down = self.boosted
-                self.last_boost = 2
-            end
+        self.boosted = self.boosted - dt
+        if self.boosted <= 0 then
             self.boosted = nil
+            self.last_boost = 2
+        else
+            if not self.pushed then
+                if not self.slowed_down and self.boosted < 0.1 then
+                    self.slowed_down = 0.3
+                end
+            end
         end
+
     end
+    -- correct velocity if slowed down
     if self.slowed_down ~= nil then
-        self.slowed_down = self.slowed_down + dt
+        self.slowed_down = self.slowed_down - dt
         x = x/2
         y = y/2
-        if self.slowed_down > 0.5 then
+        if self.slowed_down <  0 then
             self.slowed_down = nil
             dprint("reset")
         end
@@ -144,7 +146,7 @@ function Dude:boost(dt) -- boost button pressed
         elseif not self.shot and self.boosted == nil and self.slowed_down == nil then
             dprint("boost !")
             if self.last_boost == nil then
-                self.boosted = 0.0001
+                self.boosted = BOOST_DURATION
                 local asx = math.abs(sx)
                 local asy = math.abs(sy)
                 coef = 1/math.sqrt( asx^2 + asy^2)
