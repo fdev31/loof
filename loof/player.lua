@@ -83,6 +83,9 @@ function Dude:update(dt)
         end
         self.pushed = self.pushed + dt
     end
+    if self.pushed and self.pushed >= 0.3 then
+        self.pushed = nil
+    end
     if self.shot ~= nil then
         self.shot = self.shot + dt
         if self.shot > 1.5 then
