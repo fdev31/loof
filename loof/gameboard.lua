@@ -71,7 +71,12 @@ function Board:remove_opponent()
     if #self.opponents > 0 then
         local dead = self.opponents[1]
         table.remove(self.opponents, 1)
-        table.remove(self.active_objects, 1)
+        for i, op in ipairs(self.active_objects) do
+            if op == dead then
+                table.remove(self.active_objects, i)
+                break
+            end
+        end
         dead:destroy()
         cfg.DUDES = cfg.DUDES - 1
     end
@@ -86,8 +91,6 @@ function Board:add_opponent(image, opts)
     end
     local d = objects.Dude:new(love.physics.newBody(self.world, 0, 0, "dynamic") , {color={255, 70, 204}, side=side})
     d.img = image
-    table.insert(self.opponents, 1, d)
-    table.insert(self.active_objects, 1, d)
 
     local op_point = {self.background.width/3, self.background.height/2 }
     local amp = self.background.height / 10
@@ -95,6 +98,8 @@ function Board:add_opponent(image, opts)
         op_point[2] + love.math.random(-amp, amp)
     )
     self:place(d)
+    table.insert(self.opponents, 1, d)
+    table.insert(self.active_objects, 1, d)
 end
 
 function Board:add_player(image, name, input, opts)
@@ -103,10 +108,11 @@ function Board:add_player(image, name, input, opts)
     d.img = image
     d.name = name
     d.input = input
-    table.insert(self.players, 1, d)
     local op_point = {self.background.width / 3, self.background.height/2 }
     local amp = self.background.height / 10
     self:place(d)
+    table.insert(self.players, 1, d)
+    table.insert(self.active_objects, 1, d)
 end
 
 function Board:place(plr)
@@ -140,8 +146,16 @@ end
 
 function Board:update(dt)
     self.world:update(dt)
-    for i, g in ipairs(self.players) do
+    local found = nil
+    for i, g in ipairs(self.active_objects) do
         g:update(dt)
+        if not found and g:isa(objects.Dude) and g ~= self.ball.player then -- if dude without a ball
+            local x, y, dist = self.ball:distance(unpack(g.feet))
+            if dist < self.ball.radius + g.radius + 5 then -- 5px margin :P
+                self.ball:attach(nil)
+                found = true
+            end
+        end
     end
     if self.goal_marked then
         self.goal_marked = self.goal_marked + dt
@@ -165,25 +179,10 @@ function Board:update(dt)
             end
         end
     end
-    
-    local found = nil
-    for i, g in ipairs(self.active_objects) do
---        if not found and g:isa(objects.Dude) and g ~= self.ball.player then -- if dude without a ball
---            local x, y, dist = self.ball:distance(unpack(g.feet))
---            if dist - g.radius - self.ball.radius - 10 <= 0 then
---                self.ball:attach(nil)
---                found = true
---            end
---        end
-        g:update(dt)
-    end
 end
 
 function Board:draw()
     self.background:draw(0, 0)
-    for i, g in ipairs(self.players) do
-        g:draw()
-    end
     for i, g in ipairs(self.active_objects) do
         g:draw()
     end
