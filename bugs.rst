@@ -121,7 +121,7 @@ REFACTOR LEFT / RIGHT code
 ##########################
 
 :priority: 10
-:bugid: 12
+:bugid: 11
 :created: 2017-04-12T20:24:44
 
 At the end, the target is:
