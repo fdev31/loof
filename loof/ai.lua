@@ -1,3 +1,4 @@
+
 local managed = {}
 
 local function step(dt)
@@ -36,12 +37,12 @@ local function manage(dude, dt)
         end
     else
         -- shuffle time !
-        if managed.have_ball then -- one team guy owns the ball, let's go to the ennemy !
+        if cfg.difficulty > 1 and managed.have_ball then -- one team guy owns the ball, let's go to the ennemy !
             infos.mode = 'agressive'
             managed.agressive_cnt = managed.agressive_cnt + 1
         elseif infos.lastmode == nil or infos.lastmode_ts  > mode_duration then -- we don't have ball :'(
             infos.lastmode_ts = 0
-            if managed.toball_cnt > 0 and (math.random() < 0.5 or managed.toball_cnt == 0) then -- ensureone agressive, then one to ball
+            if cfg.difficulty > 1 and managed.toball_cnt > 0 and (math.random() < 0.5 or managed.toball_cnt == 0) then -- ensureone agressive, then one to ball
                 infos.mode = 'agressive' -- make one agressive, then random
                 managed.agressive_cnt = managed.agressive_cnt + 1
             else
@@ -71,7 +72,7 @@ local function manage(dude, dt)
     else
         local tgt, dist
         tgt, dist, x, y = dude:targets( g[3], game.board.background.height / 2, 0.2)
-        if tgt and  dist < 600 then
+        if cfg.difficulty > 0 and tgt and  dist < 600 then
             dude:boost(dt) -- shoot
         end
     end

@@ -133,6 +133,7 @@ function MainMenu:new()
     local self = Menu.new(self, 'menu', {
         SimpleEntry:new('NewGame', MainMenu.handle_NewGame),
         SimpleEntry:new('Enemies', MainMenu.handle_Enemies),
+        LeftRightEntry:new('Difficulty', 0, MainMenu.handle_Difficulty),
         LeftRightEntry:new('Keyboard', -1, MainMenu.handle_keyboardswitch),
         LeftRightEntry:new('GamePad', 0, MainMenu.handle_gamepadswitch),
         SimpleEntry:new('Quit',    MainMenu.handle_Quit),
@@ -142,7 +143,7 @@ end
 
 function MainMenu:draw()
     Menu.draw(self)
-    for i=1,#game.board.opponents do
+    for i=1,#game.board.opponents do -- XXX: make it a specific menu (count menu? - as in LeftRightMenu)
         game.board.opponents_img:draw(640 + 50*i, 250)
     end
 end
@@ -169,3 +170,8 @@ end
 function MainMenu:handle_gamepadswitch(entry, key)
     cfg.gamepad = entry.position
 end
+
+function MainMenu:handle_Difficulty(entry, key)
+    cfg.difficulty = 1 + entry.position
+end
+
